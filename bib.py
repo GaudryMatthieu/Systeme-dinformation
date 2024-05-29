@@ -1,9 +1,55 @@
 '''
-This goal of this python script is too simulate a CRUD in the terminal. 
+The goal of this Python script is to simulate CRUD operations in the terminal.
 We can create some books and store them in a library.
-We can also read, modify or delete the books in the library.
-I used 2 class to make my script. The first one is for the books and the seconde one is for store them.
+We can also read, modify, or delete the books in the library.
+I used 2 classes to make my script. The first one is for the books and the second one is to store them.
 '''
+
+import jsonpickle
+import os
+import socketserver
+
+class MyTCPHandler(socketserver.BaseRequestHandler):
+    """
+    The request handler class for our server.
+
+    It is instantiated once per connection to the server and must
+    override the handle() method to implement communication with the
+    client.
+    """
+
+    def handle(self):
+        # self.request is the TCP socket connected to the client
+        self.data = self.request.recv(1024).strip().decode()
+        new_data = self.data.split('$')
+        lib = Library()
+        
+        if new_data[0] == 'créer':
+            lib.add_book(new_data)
+            self.request.sendall("livre ajouté".encode("utf-8"))
+        
+        elif new_data[0] == 'lire':
+            if not lib.get_shelf():
+                self.request.sendall("Aucun livre dans la bibliothèque".encode("utf-8"))
+            else:
+                books = lib.read_library()
+                self.request.sendall(books.encode("utf-8"))
+                
+        elif new_data[0] == 'suppr':
+            if not lib.get_shelf():
+                self.request.sendall("Aucun livre dans la bibliothèque".encode("utf-8"))
+            else:
+                lib.remove_book(new_data)
+                self.request.sendall("livre supprimé".encode("utf-8"))
+                    
+        elif new_data[0] == 'modifier':
+            if not lib.get_shelf():
+                self.request.sendall("Aucun livre dans la bibliothèque".encode("utf-8"))
+            else:
+                lib.update_book(new_data)
+                self.request.sendall("livre modifié".encode("utf-8"))
+        else:
+            self.request.sendall("commande inconnue".encode("utf-8"))
 
 class Book:
     def __init__(self, author, title, content):
@@ -12,69 +58,80 @@ class Book:
         self.__content = content
     
     def display_details(self):
-        print("Author: ", self.__author)
-        print("Title: ", self.__title)
-        print("Content: ", self.__content)
+        return f"Auteur : {self.__author}, Titre : {self.__title}, Contenu : {self.__content}"
         
     def update(self, author, title, content):
         self.__author = author
         self.__title = title
         self.__content = content
     
-    # Getter for get the title
+    # Getter to get the title
     def get_title(self):
         return self.__title
     
-    # Fuction to get the title in string and not the address location
+    # Function to get the title as a string and not the address location
     def __str__(self):
         return f"{self.__title}"
 
-
 class Library:
+    global_file = "save.json"
+    
     def __init__(self):
         self.__shelf = []
+        self.__load()
+    
+    def add_book(self, data):
         
-    def add_book(self):
-        author = input("Entrez l'auteur : ")
-        title = input("Entrez le titre : ")
-        content = input("Entrez le contenu : ")
-            
-        book = Book(author, title, content)
+        book = Book(data[1], data[2], data[3])
         self.__shelf.append(book)
+        self.save()
         
     def read_library(self):
+        books = ""
         for book in self.__shelf:
-            print(f"Voici le contenu de la bibliothèque : {book}")
-            book.display_details()
-            print("-----")
+            books += book.display_details()
+        return books
             
-    def remove_book(self, book_to_delete):
+    def remove_book(self, data):
         for book in self.__shelf:
-            if book.get_title() == book_to_delete:
-                self.__shelf.remove(book)
+            if book.get_title() == data[2]:
+                self.__shelf.remove(data[1], data[2], data[3])
                 print("Le livre a été supprimé de la liste")
-                return  # Sortir de la boucle après suppression
+                self.save()
+                return  # Exit the loop after deletion
             
-    def update_book(self):
+    def update_book(self, data):
         book_to_update = input("Entrez le nom du livre à modifier : ")
         for book in self.__shelf:
             if book.get_title() == book_to_update:
-                author = input("Entrez l'auteur à modifier: ")
-                title = input("Entrez le titre à modifier : ")
-                content = input("Entrez le contenu à modifier : ")
-                new_book = Book(author, title, content)
-                self.__shelf.remove(book)
-                self.__shelf.append(new_book)
-                print("Le livre a été modifié de la liste")
-                return  # Sortir de la boucle après suppression
+                book.update(data[1], data[2], data[3])
+                print("Le livre a été modifié")
+                self.save()
+                return  # Exit the loop after update
         
     def get_shelf(self):
         return self.__shelf
     
     def __str__(self):
         return f"{[book.get_title() for book in self.__shelf]}"
+    
+    def __load(self):
+        if os.path.exists(Library.global_file):
+            with open(Library.global_file, 'r') as f:
+                strjson = f.read()
+                self.__shelf = jsonpickle.decode(strjson)._Library__shelf
 
-def main():
+    def save(self):
+        with open(Library.global_file, 'w') as f:
+            f.write(jsonpickle.encode(self))
+
+"""def input_book():
+    author = input("Entrez l'auteur : ")
+    title = input("Entrez le titre : ")
+    content = input("Entrez le contenu : ")
+    return author, title, content
+
+ def main():
     print("Bienvenue! Tapez 'exit' pour quitter.")
     lib = Library()
     while True:
@@ -101,14 +158,17 @@ def main():
             else:
                 lib.update_book()
                 
-        
         elif user_input == 'exit':
+            lib.save()
             print("Au revoir!")
             break
 
         else:
-            print(f"Commande inconnue: {user_input}")
+            print(f"Commande inconnue: {user_input}") """
 
 # This condition checks if the script is executed as the main script
 if __name__ == "__main__":
-    main()
+    HOST, PORT = "localhost", 9999
+    with socketserver.TCPServer((HOST, PORT), MyTCPHandler) as server:
+        print(f"Serving on {HOST}:{PORT}")
+        server.serve_forever()
