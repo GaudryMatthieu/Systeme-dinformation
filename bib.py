@@ -1,3 +1,10 @@
+'''
+This goal of this python script is too simulate a CRUD in the terminal. 
+We can create some books and store them in a library.
+We can also read, modify or delete the books in the library.
+I used 2 class to make my script. The first one is for the books and the seconde one is for store them.
+'''
+
 class Book:
     def __init__(self, author, title, content):
         self.__author = author
@@ -14,9 +21,11 @@ class Book:
         self.__title = title
         self.__content = content
     
+    # Getter for get the title
     def get_title(self):
         return self.__title
     
+    # Fuction to get the title in string and not the address location
     def __str__(self):
         return f"{self.__title}"
 
@@ -100,5 +109,6 @@ def main():
         else:
             print(f"Commande inconnue: {user_input}")
 
+# This condition checks if the script is executed as the main script
 if __name__ == "__main__":
     main()
