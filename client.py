@@ -3,8 +3,6 @@ import socket
 
 HOST, PORT = "172.17.0.2", 9999
 
-data = []
-
 def send_data():
     if data:
         data_str = "$".join(data)
@@ -34,28 +32,22 @@ def input_book():
     data.append(title)
     data.append(content)
 
-action = ""
+data = []
+action =""
 while action != "q":
         action = input("choose action: ")
+        data = [action]
         print(f"triggered action: {action}")
         match action:
             case "modifier":
-                data = [action]
                 input_book()
                 send_data()
-                data = []
             case "créer":
-                data = [action]
                 input_book()
                 send_data()
-                data = []
             case "suppr":
-                data = [action]
                 send_data()
-                data = []
             case "lire":
-                data = [action]
                 send_data()
-                data = []
             case _:
                 pass

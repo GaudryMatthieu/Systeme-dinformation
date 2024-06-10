@@ -168,7 +168,7 @@ class Library:
 
 # This condition checks if the script is executed as the main script
 if __name__ == "__main__":
-    HOST, PORT = "localhost", 9999
+    HOST, PORT = "0.0.0.0", 9999
     with socketserver.TCPServer((HOST, PORT), MyTCPHandler) as server:
         print(f"Serving on {HOST}:{PORT}")
         server.serve_forever()
