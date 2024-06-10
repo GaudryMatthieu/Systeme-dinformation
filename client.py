@@ -1,7 +1,7 @@
 import socket
 #import sys
 
-HOST, PORT = "localhost", 9999
+HOST, PORT = "172.17.0.2", 9999
 
 data = []
 
