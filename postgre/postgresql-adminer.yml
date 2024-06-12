@@ -1,0 +1,19 @@
+# Use root/example as user/password credentials
+
+version: '3.1'
+
+services:
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  gameboardb:
+    image: postgres:16.3-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: gameboard
+      POSTGRES_USER: gameboard_user
+      POSTGRES_PASSWORD: gameboard_password

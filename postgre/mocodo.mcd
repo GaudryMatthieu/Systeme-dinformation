@@ -1,0 +1,7 @@
+magasin: magasin_id**, website
+vend, 0N magasin, 0N jeu_de_societe:prix
+jeu_de_societe: jeu_de_societe_id**, type, age, titre, nb_joueurs
+editer, 0N éditeur, 11 jeu_de_societe
+éditeur: editeur_id**, raison sociale, siège social
+achats, 0N client, 0N jeu_de_societe, 0N magasin: date_achat
+client: client_id**, age, email, nom
