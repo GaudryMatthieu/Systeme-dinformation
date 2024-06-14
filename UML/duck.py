@@ -52,7 +52,7 @@ class Duck(ABC):
     @abstractmethod
     def display(self):
         return "look at me"
-
+    
 class Donald(Duck):
     def __init__(self, color, sexe):
         super().__init__(color, sexe)
