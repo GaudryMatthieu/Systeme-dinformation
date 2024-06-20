@@ -4,7 +4,7 @@ We can create some books and store them in a library.
 We can also read, modify, or delete the books in the library.
 I used 2 classes to make my script. The first one is for the books and the second one is to store them.
 '''
-
+from prometheus_client import Counter, start_http_server, Gauge
 import jsonpickle
 import os
 import socketserver
@@ -85,6 +85,8 @@ class Library:
         book = Book(data[1], data[2], data[3])
         self.__shelf.append(book)
         self.save()
+        c.inc()
+        g.inc()
         
     def read_library(self):
         books = ""
@@ -98,6 +100,7 @@ class Library:
                 self.__shelf.remove(data[1], data[2], data[3])
                 print("Le livre a été supprimé de la liste")
                 self.save()
+                g.dec()
                 return  # Exit the loop after deletion
             
     def update_book(self, data):
@@ -168,7 +171,11 @@ class Library:
 
 # This condition checks if the script is executed as the main script
 if __name__ == "__main__":
+    start_http_server(7777)
     HOST, PORT = "0.0.0.0", 9999
     with socketserver.TCPServer((HOST, PORT), MyTCPHandler) as server:
         print(f"Serving on {HOST}:{PORT}")
+        c = Counter('ADD', 'a book has been add to the librairie')
+        g = Gauge('Toto_BOOK', 'Description of gauge')
+        g.set(4) 
         server.serve_forever()

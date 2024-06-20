@@ -1,7 +1,7 @@
 import socket
 #import sys
 
-HOST, PORT = "172.17.0.2", 9999
+HOST, PORT = "localhost", 9999
 
 def send_data():
     if data:
@@ -46,6 +46,7 @@ while action != "q":
                 input_book()
                 send_data()
             case "suppr":
+                input_book()
                 send_data()
             case "lire":
                 send_data()

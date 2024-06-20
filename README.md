@@ -1,1 +1,5 @@
-#Système d'information
+# Système d'information
+
+``` bash
+$ python -m venv env 
+```

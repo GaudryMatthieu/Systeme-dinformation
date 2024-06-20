@@ -12,3 +12,6 @@ docker build -t bibclient:latest -f Dockerfile-Client .
 
 # run container
 docker run -it bibclient:latest
+
+# command to know the ip address of a docker container
+docker inspect <container ID>

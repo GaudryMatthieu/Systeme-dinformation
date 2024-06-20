@@ -1,0 +1,11 @@
+groups:
+- name: example
+  rules:
+  - alert: TooManyBooks
+    expr: Toto_BOOK > 10
+    for: 5s
+    labels:
+      severity: page
+    annotations:
+      summary: "+10 BOOKS"
+      
