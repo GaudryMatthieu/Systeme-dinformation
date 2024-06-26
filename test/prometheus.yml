@@ -38,4 +38,4 @@ scrape_configs:
   - targets:
     - host.docker.internal:7777
 rule_files:
-  - C:\Users\matth\HEXAGONE\2e-annee\systeme-dinformation\cours\test\prometheus.yml
+  - '/etc/prometheus/alert_rules.yml'
