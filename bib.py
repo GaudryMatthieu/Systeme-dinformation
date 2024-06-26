@@ -20,8 +20,10 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         # self.request is the TCP socket connected to the client
-        self.data = self.request.recv(1024).strip().decode()
-        new_data = self.data.split('$')
+        print()
+        self.data = self.request.recv(1024).strip()
+        print(self.data)
+        new_data = self.data.decode('utf-8').split('$')
         lib = Library()
         
         if new_data[0] == 'créer':
@@ -81,9 +83,11 @@ class Library:
         self.__load()
     
     def add_book(self, data):
-        
+        print("1")
         book = Book(data[1], data[2], data[3])
+        print("2")
         self.__shelf.append(book)
+        print("3")
         self.save()
         c.inc()
         g.inc()
@@ -95,9 +99,11 @@ class Library:
         return books
             
     def remove_book(self, data):
+        counter = 0
         for book in self.__shelf:
+            counter += 1
             if book.get_title() == data[2]:
-                self.__shelf.remove(data[1], data[2], data[3])
+                self.__shelf.remove(book)
                 print("Le livre a été supprimé de la liste")
                 self.save()
                 g.dec()

@@ -1,7 +1,7 @@
 import socket
 #import sys
 
-HOST, PORT = "localhost", 9999
+HOST, PORT = "172.17.0.2", 9999
 
 def send_data():
     if data:
@@ -9,11 +9,10 @@ def send_data():
 
         # Créer une socket (SOCK_STREAM signifie une socket TCP)
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            try:
+            try :
             # Se connecter au serveur et envoyer les données
                 sock.connect((HOST, PORT))
                 sock.sendall(bytes(data_str, "utf-8"))
-
                 # Recevoir les données du serveur et fermer la connexion
                 received = str(sock.recv(1024), "utf-8")
 
