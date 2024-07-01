@@ -23,7 +23,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         print()
         self.data = self.request.recv(1024).strip()
         print(self.data)
-        new_data = self.data.decode('utf-8').split('$')
+        new_data = self.data.decode("iso-8859-1").split('$')
         lib = Library()
         
         if new_data[0] == 'créer':
